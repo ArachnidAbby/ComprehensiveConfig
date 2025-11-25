@@ -1,17 +1,18 @@
 from comprehensiveconfig import ConfigSpec
 from comprehensiveconfig.spec import TableSpec, Section, Integer, Float, Text, List
-from comprehensiveconfig.json import JsonWriter
 from comprehensiveconfig.toml import TomlWriter
 
 
 class Example(TableSpec):
     x = Integer(10)
 
+
 class MyConfigSpec(ConfigSpec,
                    default_file="test.toml",
                    writer=TomlWriter,
                    create_file=True):
     class MySection(Section, name="Funny_Section"):
+        '''Example comment under section'''
         some_field = Integer(10)
         other_field = Text("Some Default Text")
 

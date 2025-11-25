@@ -195,13 +195,20 @@ class Float(ConfigurationField):
 class List[T](ConfigurationField):
     """List field"""
 
-    __slots__ = ("inner_type")
+    __slots__ = "inner_type"
 
     @classmethod
     def __new__(cls, default_value: list[T] = [], /, *args, **kwargs) -> list[T]:  # type: ignore
         return super().__new__(cls)  # type: ignore
 
-    def __init__(self, default_value: list[T] = [], /, inner_type: ConfigurationField | None | Any = None, *args, **kwargs):
+    def __init__(
+        self,
+        default_value: list[T] = [],
+        /,
+        inner_type: ConfigurationField | None | Any = None,
+        *args,
+        **kwargs,
+    ):
         self.inner_type = inner_type
 
         return super().__init__(default_value, *args, **kwargs)
@@ -212,13 +219,13 @@ class List[T](ConfigurationField):
             raise ValueError(
                 f"Field: {self._name}\nValue was not a valid list: {value}"
             )
-        
+
         match self.inner_type:
             case None:
                 return
             case type():
                 raise ValueError(self.inner_type)
-            
+
             case BaseConfigurationField():
                 for c, item in enumerate(value):
                     self.inner_type._name = f"{self._name}[{c}]"
@@ -226,7 +233,8 @@ class List[T](ConfigurationField):
 
 
 class TableSpec(ConfigurationField):
-    '''A model/Table'''
+    """A model/Table"""
+
     __slots__ = ()
 
     _FIELDS: dict[str, AnyConfigField]
@@ -273,19 +281,27 @@ class TableSpec(ConfigurationField):
         cls._FIELD_VAR_MAP = {value: key for key, value in cls._FIELD_NAME_MAP.items()}
 
         # generate default value
-        cls._cls_has_default = all(field._has_default for field in cls._ALL_FIELDS.values())
+        cls._cls_has_default = all(
+            field._has_default for field in cls._ALL_FIELDS.values()
+        )
         if cls._cls_has_default:
             cls._cls_default_value = {
                 field._name: field._default_value for field in cls._ALL_FIELDS.values()
             }
         else:
             cls._cls_default_value = NoDefaultValue
-    
+
     @classmethod
     def __new__(cls, default_value: dict[str, Any] | _NoDefaultValueT = NoDefaultValue, /, *args, **kwargs) -> dict[str, Any]:  # type: ignore
         return super().__new__(cls)  # type: ignore
 
-    def __init__(self, default_value: dict[str, Any] | _NoDefaultValueT = NoDefaultValue, /, *args, **kwargs):
+    def __init__(
+        self,
+        default_value: dict[str, Any] | _NoDefaultValueT = NoDefaultValue,
+        /,
+        *args,
+        **kwargs,
+    ):
         if default_value is NoDefaultValue:
             default_value = self._cls_default_value
         super().__init__(default_value, *args, **kwargs)
@@ -310,7 +326,15 @@ class Table[K, V](ConfigurationField):
     def __new__(cls, default_value: dict[K, V] | _NoDefaultValueT = NoDefaultValue, /, *args, **kwargs) -> dict[K, V]:  # type: ignore
         return super().__new__(cls)  # type: ignore
 
-    def __init__(self, default_value: Any = NoDefaultValue, /, key_type: AnyConfigField | None | Any = None, value_type: AnyConfigField | None | Any = None, *args, **kwargs):
+    def __init__(
+        self,
+        default_value: Any = NoDefaultValue,
+        /,
+        key_type: AnyConfigField | None | Any = None,
+        value_type: AnyConfigField | None | Any = None,
+        *args,
+        **kwargs,
+    ):
         self.key_type = key_type
         self.value_type = value_type
 
@@ -322,14 +346,14 @@ class Table[K, V](ConfigurationField):
             raise ValueError(
                 f"Field: {self._name}\nValue was not a valid dict: {value}"
             )
-        
+
         if self.key_type is not None:
             for c, key in enumerate(value.keys()):
                 self.key_type._name = f"{self._name}[{key}] (keyname)"
                 self.key_type._validate_value(key)
-            
+
         if self.value_type is not None:
-            for (key, val) in value.items():
+            for key, val in value.items():
                 self.value_type._name = f"{self._name}[{key}] (value)"
                 self.value_type._validate_value(val)
 
@@ -391,4 +415,7 @@ __all__ = [
     "Integer",
     "Number",
     "Text",
+    "Table",
+    "TableSpec",
+    "List",
 ]

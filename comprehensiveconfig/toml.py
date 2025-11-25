@@ -1,4 +1,3 @@
-import json
 import tomllib
 from . import configio
 from . import spec
@@ -8,11 +7,11 @@ def escape(value):
     return value.translate(
         str.maketrans(
             {
-                '\n': '\\n',
-                '\t': '\\t',
-                '\r': '\\r',
-                '\"': '\\"',
-                '\'': '\\\'',
+                "\n": "\\n",
+                "\t": "\\t",
+                "\r": "\\r",
+                '"': '\\"',
+                "'": "\\'",
             }
         )
     )
@@ -29,11 +28,14 @@ class TomlWriter(configio.ConfigurationWriter):
     def dump_section(cls, node):
         if " " in node._name:
             raise ValueError(node._name)
-        
+
         if node._parent is not None:
             base = [f"\n[{'.'.join(full_section_name(node)[1:])}]"]
         else:
             base = []
+
+        if node.__doc__:
+            base.append(f"# {node.__doc__}")
 
         return [
             *base,
@@ -53,7 +55,7 @@ class TomlWriter(configio.ConfigurationWriter):
             case int() | float():
                 return value
             case str():
-                return f"\"{escape(value)}\""
+                return f'"{escape(value)}"'
             case list():
                 return f"[{", ".join([str(cls.format_value(inner_val)) for inner_val in value])}]"
             case dict():
@@ -65,7 +67,7 @@ class TomlWriter(configio.ConfigurationWriter):
     def dump_field(cls, field_name: str, value):
         if not isinstance(value, spec.ConfigurationField):
             return f"{field_name} = {cls.format_value(value)}"
-        raise NotImplementedError(value) # this isn't implemented yet
+        raise NotImplementedError(value)  # this isn't implemented yet
 
     @classmethod
     def dumps(cls, node) -> str:
