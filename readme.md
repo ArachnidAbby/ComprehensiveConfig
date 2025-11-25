@@ -7,6 +7,8 @@ A simple configuration library that lets you create a pydantic-like model for yo
 - [x] Number Fields
 - [x] Text Fields (with regex filtering)
 - [x] List fields
+- [x] Table fields
+- [x] TableSpec (Model) fields
 - [x] Sections
 - [x] Include doc comments in Section
 - [x] auto loading
@@ -15,6 +17,7 @@ A simple configuration library that lets you create a pydantic-like model for yo
 - [ ] section list
 - [ ] per attribute doc comments
 - [ ] enum support
+- [ ] fully supported string escapes (PRIORITY)
 
 
 # Example (Python)
