@@ -1,3 +1,4 @@
+# Comprehensive Configuration
 A simple configuration library that lets you create a pydantic-like model for your configuration.
 
 # Features
