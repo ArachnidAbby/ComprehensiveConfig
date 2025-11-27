@@ -15,7 +15,8 @@ A simple configuration library that lets you create a pydantic-like model for yo
 - [x] auto loading
 - [x] initialize default config (with auto loader)
 - [ ] yaml writer
-- [ ] section list
+- [x] section list (via a Table field)
+- [x] Field type unions (overwriting normal union syntax)
 - [ ] per attribute doc comments
 - [ ] enum support
 - [ ] fully supported string escapes (PRIORITY)

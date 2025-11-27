@@ -1,6 +1,6 @@
 from abc import ABCMeta
 import os
-from typing import Any, Self, Type
+from typing import Any, Self, Type, Union
 
 from . import configio
 from . import spec
@@ -15,7 +15,7 @@ class _ConfigSpecMeta(type):
     _DEFAULT_FILE: str | None
     _AUTO_LOAD: bool
     _CREATE_FILE: bool
-    _INST: "ConfigSpec | None"
+    _INST: Union["ConfigSpec", None]
 
     def __new__(
         cls,
@@ -34,7 +34,12 @@ class _ConfigSpecMeta(type):
         cls._CREATE_FILE = create_file
         cls._AUTO_LOAD = auto_load
         return super().__new__(cls, name, bases, attrs)
-
+    
+    def __get__(self, instance, owner):
+        if self._INST is None:
+            return self
+        return self._INST
+        
     def __getattribute__(self, name):
         """get attributes from active instance if available"""
         inst = object.__getattribute__(self, "_INST")
@@ -43,16 +48,16 @@ class _ConfigSpecMeta(type):
 
         return super().__getattribute__(name)
 
-    def __setattr__(self, name, value):
-        """get attributes from active instance if available"""
+    def __setattribute__(self, name, value):
+        """set attributes from active instance if available"""
         inst = object.__getattribute__(self, "_INST")
         if inst is not None and name in inst._ALL_FIELDS.keys():
-            return inst.__setattr__(name, value)
+            return inst.__setattribute__(name, value)
 
         return super().__setattr__(name, value)
 
 
-class _ConfigSpecABCMeta(_ConfigSpecMeta, ABCMeta):
+class _ConfigSpecABCMeta(spec.ConfigurationFieldABCMeta, _ConfigSpecMeta):
     """A combination of ABCMeta and config spec meta"""
 
 
