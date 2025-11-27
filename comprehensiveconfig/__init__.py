@@ -34,12 +34,12 @@ class _ConfigSpecMeta(type):
         cls._CREATE_FILE = create_file
         cls._AUTO_LOAD = auto_load
         return super().__new__(cls, name, bases, attrs)
-    
+
     def __get__(self, instance, owner):
         if self._INST is None:
             return self
         return self._INST
-        
+
     def __getattribute__(self, name):
         """get attributes from active instance if available"""
         inst = object.__getattribute__(self, "_INST")

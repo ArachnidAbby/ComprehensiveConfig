@@ -27,7 +27,7 @@ class ConfigurationFieldMeta[C](type):
         return super().__new__(*args, **kwargs)
 
     def __or__[S, T](self: S, value: Type[T] | T) -> S | Type[T]:
-        """broaden normal"""
+        """broaden normal Union behavior so things don't break"""
         if not isinstance(value, type) and not isinstance(
             value, BaseConfigurationField
         ):
@@ -307,10 +307,6 @@ class Float(ConfigurationField):
 
     _holds: float
 
-    # @classmethod
-    # def __new__(cls, *args, **kwargs) -> float:  # type: ignore
-    #     return super().__new__(cls)  # type: ignore
-
     def __get__(self, instance, owner) -> float:
         return super().__get__(instance, owner)
 
@@ -331,10 +327,6 @@ class List[T](ConfigurationField):
     __slots__ = "inner_type"
 
     _holds: list[T]
-
-    # @classmethod
-    # def __new__(cls, default_value: list[T] = [], /, *args, **kwargs) -> list[T]:  # type: ignore
-    #     return super().__new__(cls)  # type: ignore
 
     def __init__(
         self,
@@ -466,10 +458,6 @@ class Table[K, V](ConfigurationField):
 
     _holds: dict[K, V]
 
-    # @classmethod
-    # def __new__(cls, default_value: dict[K, V] | _NoDefaultValueT = NoDefaultValue, /, *args, **kwargs) -> dict[K, V]:  # type: ignore
-    #     return super().__new__(cls)  # type: ignore
-
     def __init__(
         self,
         default_value: Any = NoDefaultValue,
@@ -545,10 +533,6 @@ class Text(ConfigurationField):
 
     _holds: str
 
-    # @classmethod
-    # def __new__(cls, *args, **kwargs) -> str:  # type: ignore
-    #     return super().__new__(cls)  # type: ignore
-
     def __init__(
         self,
         default_value: str | _NoDefaultValueT = NoDefaultValue,
@@ -587,10 +571,6 @@ class ConfigUnion[L, R](ConfigurationField):
 
     _left_type: AnyConfigField | Type
     _right_type: AnyConfigField | Type
-
-    # @classmethod
-    # def __new__(cls, *args, **kwargs) -> L | R:  # type: ignore
-    #     return super().__new__(cls)  # type: ignore
 
     def __init__(
         self,
