@@ -19,13 +19,8 @@ class _NoDefaultValueT:
 NoDefaultValue = object.__new__(_NoDefaultValueT)
 
 
-class ConfigurationFieldMeta[C](type):
+class ConfigurationFieldMeta(type):
     """Provides custom union logic for configuration fields"""
-
-    @classmethod
-    def __new__(cls: Type[C], *args, **kwargs) -> Type[C]:  # type: ignore
-        return super().__new__(*args, **kwargs)
-
     def __or__[S, T](self: S, value: Type[T] | T) -> S | Type[T]:
         """broaden normal Union behavior so things don't break"""
         if not isinstance(value, type) and not isinstance(
